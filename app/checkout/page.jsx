@@ -20,6 +20,8 @@ export default function CheckoutPage() {
     city: '',
     zip: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -29,40 +31,93 @@ export default function CheckoutPage() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setError(null);
   };
 
   const handlePlaceOrder = async () => {
     if (!token) {
-      alert('Please log in to place an order');
-      router.push('/login');
+      setError('Please log in to place an order');
+      setTimeout(() => router.push('/login'), 2000);
       return;
     }
     if (!formData.name || !formData.email || !formData.address) {
-      alert('Please fill in all required fields');
+      setError('Please fill in all required fields');
       return;
     }
 
-    const order = {
+    setLoading(true);
+    setError(null);
+
+    const orderData = {
       items: cartItems,
       total: parseFloat(total),
       shipping: formData,
     };
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(order),
-    });
+    try {
+      const orderRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    if (res.ok) {
-      alert('Order placed successfully!');
-      dispatch(clearCart());
-      router.push('/orders');
-    } else {
-      alert('Failed to place order');
+      const orderResult = await orderRes.json();
+      if (!orderRes.ok) {
+        throw new Error(orderResult.message || 'Failed to create order');
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: Math.round(total * 100),
+        currency: 'INR',
+        name: 'E-Shop',
+        description: 'Order Payment',
+        order_id: orderResult.order.razorpayOrderId,
+        handler: async (response) => {
+          const paymentData = {
+            ...orderData,
+            paymentId: response.razorpay_payment_id,
+          };
+
+          const finalRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(paymentData),
+          });
+
+          if (finalRes.ok) {
+            alert('Order placed and paid successfully!');
+            dispatch(clearCart());
+            router.push('/orders');
+          } else {
+            throw new Error('Payment verification failed');
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: '9999999999',
+        },
+        theme: {
+          color: '#34D399',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', () => {
+        setError('Payment failed. Please try again.');
+      });
+      rzp.open();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,7 +133,7 @@ export default function CheckoutPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border p-4 rounded-md shadow-sm">
+          <div className="border p-4 rounded-md shadow-sm bg-white">
             <h2 className="text-xl font-semibold mb-4">Shipping Information</h2>
             <div className="space-y-4">
               <div>
@@ -88,8 +143,9 @@ export default function CheckoutPage() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -99,8 +155,9 @@ export default function CheckoutPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -110,8 +167,9 @@ export default function CheckoutPage() {
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -122,7 +180,8 @@ export default function CheckoutPage() {
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    disabled={loading}
                   />
                 </div>
                 <div>
@@ -132,13 +191,14 @@ export default function CheckoutPage() {
                     name="zip"
                     value={formData.zip}
                     onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    disabled={loading}
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="border p-4 rounded-md shadow-sm">
+          <div className="border p-4 rounded-md shadow-sm bg-white">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             <div className="space-y-2">
               {cartItems.map((item) => (
@@ -154,11 +214,41 @@ export default function CheckoutPage() {
                 <span>${total}</span>
               </div>
             </div>
+            {error && (
+              <p className="text-red-600 mt-4 text-center animate-pulse">{error}</p>
+            )}
             <Button
-              className="w-full mt-6 bg-green-600 hover:bg-green-700"
+              className="w-full mt-6 bg-green-600 hover:bg-green-700 flex items-center justify-center transition-colors"
               onClick={handlePlaceOrder}
+              disabled={loading}
             >
-              Place Order
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                    />
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                'Pay and Place Order'
+              )}
             </Button>
           </div>
         </div>

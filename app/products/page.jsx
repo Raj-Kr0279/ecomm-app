@@ -25,16 +25,21 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Our Products</h1>
+      <h1 className="text-3xl font-bold mb-6">Our Products</h1>
       <p className="mb-4">Items in cart: {cartItems.length}</p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product._id} className="border p-4 rounded-md">
-            <h2 className="text-xl">{product.name}</h2>
-            <p className="text-gray-600">${product.price}</p>
+          <div key={product._id} className="border p-4 rounded-md shadow-sm hover:shadow-md transition">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-48 object-cover rounded-md mb-4"
+            />
+            <h2 className="text-xl font-semibold">{product.name}</h2>
+            <p className="text-gray-600">₹{product.price}</p>
             <Button
-              className="mt-2"
-              onClick={() => dispatch(addToCart({ id: product._id, name: product.name, price: product.price }))}
+              className="mt-4 w-full"
+              onClick={() => dispatch(addToCart({ id: product._id, name: product.name, price: product.price, image: product.image }))}
             >
               Add to Cart
             </Button>
