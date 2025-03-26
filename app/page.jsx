@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import heroBg from '@/public/hero-bg.jpg';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -22,17 +23,17 @@ export default function Home() {
     <div className="min-h-screen bg-bgPrimary">
       {/* Hero Section */}
       <section
-        className="relative h-[60vh] bg-cover bg-center"
-        style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+        className='h-[60vh] relative'
       >
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+        <img src={heroBg.src} className="h-[60vh] object-cover w-full absolute z-10" />
+        <div className="absCenter z-20 flex items-center justify-center">
           <div className="text-center text-white animate-fade-in">
-            <h1 className="text-5xl font-secondary font-bold mb-4">Discover Your Style</h1>
+            <h1 className="text-5xl text-instaRed font-secondary font-bold mb-4 test-class">Discover Your Style</h1>
             <p className="text-xl font-primary text-textSecondary mb-6">
               Shop the latest trends with ease
             </p>
             <Link href="/products">
-              <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg font-primary">
+              <Button className="">
                 Shop Now
               </Button>
             </Link>
@@ -71,10 +72,10 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="bg-primary text-white text-center py-12">
+      <section className="text-center py-12">
         <h2 className="text-2xl font-secondary font-bold mb-4">Ready to Shop?</h2>
         <Link href="/products">
-          <Button className="bg-white text-primary hover:bg-secondary hover:text-white px-6 py-2 font-primary">
+          <Button className="">
             Explore All Products
           </Button>
         </Link>
