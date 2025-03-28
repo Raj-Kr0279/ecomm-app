@@ -1,18 +1,31 @@
-@import "tailwindcss/preflight";
-@tailwind utilities;
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+@theme {
+  --text-textPrimary: #111827; /* Dark Gray */
+  --text-textSecondary: #6B7280; /* Muted Gray */
+  --color-bgPrimary: #F3F4F6; /* Light Gray */
+  --color-bgSecondary: #E5E7EB; /* Gray */
+  --color-primary: #cd0202;
+  --color-hoverButton: #f00;
+  --color-secondary: #9333EA; /* Purple */
+  --color-accent: #F59E0B; /* Amber */
+  --font-primary: 'Inter', sans-serif;
+  --font-secondary: 'Poppins', sans-serif;
+  --animation-fadeIn: fadeIn 0.5s ease-in-out;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  color: rgb(var(--text-textSecondary));
+  background: rgb(var(--color-bgSecondary));
 }
 
 /* Custom container styles */
 .container {
   max-width: 1200px;
+}
+.absCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
