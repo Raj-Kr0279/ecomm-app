@@ -134,20 +134,20 @@ export default function OrdersPage() {
                     </span>
                   </p>
                   <div className="mt-4">
-                    <p><strong>Shipped to:</strong> {order.shipping.name}</p>
-                    <p>{order.shipping.email}</p>
-                    <p>{order.shipping.address}</p>
-                    {order.shipping.city && order.shipping.zip && (
-                      <p>{order.shipping.city}, {order.shipping.zip}</p>
+                    <p><strong>Shipped to:</strong> {order.shipping?.name}</p>
+                    <p>{order.shipping?.email}</p>
+                    <p>{order.shipping?.address}</p>
+                    {order.shipping?.city && order.shipping?.zip && (
+                      <p>{order.shipping?.city}, {order.shipping?.zip}</p>
                     )}
                   </div>
                 </div>
                 <div>
                   <h3 className="text-lg font-medium mb-2">Items</h3>
-                  {order.items.map((item) => (
+                  {order.items?.map((item) => (
                     <div key={item._id} className="flex justify-between mb-2">
                       <span>
-                        {item.product.name} (x{item.quantity})
+                        {item.product?.name} (x{item.quantity})
                       </span>
                       <span>${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
@@ -163,7 +163,7 @@ export default function OrdersPage() {
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
                     className="bg-green-600 h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${getProgress(order.deliveryStatus)}%` }}
+                    style={{ width: `${getProgress(order?.deliveryStatus)}%` }}
                   />
                 </div>
               </div>

@@ -3,77 +3,85 @@
 import Link from "next/link";
 import { useAuth } from "@/lib/authContext";
 import Button from "@/components/ui/Button";
-import { FaCartShopping, FaHeart, FaUser } from "react-icons/fa6";
+import { IoCartOutline, IoHeartOutline } from "react-icons/io5";
+import { AiOutlineUser } from "react-icons/ai";
+import logo from "@/public/logo.jpeg";
 
 export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="bg-gray-200 p-4">
+    <header className="p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold">
-          Shoppies
-        </Link>
-
-        {/* Navigation */}
         <nav className="space-x-4 flex items-center">
-          <Link href="/products" className="hover:text-gray-500">
-            Products
+        <Link href="/" className="text-2xl flex items-center font-bold">
+          <img src={logo.src} alt="Logo" className="h-8 rounded-full object-cover w-8 inline-block mr-2" />
+        </Link>
+          <div className="space-x-4 hidden md:flex">
+          <Link href="/" className="hover:text-gray-500">
+            About
           </Link>
-         
+          <Link href="/" className="hover:text-gray-500">
+            Services
+          </Link>
+          <Link href="/" className="hover:text-gray-500">
+            Contact
+          </Link>
+          <Link href="/" className="hover:text-gray-500">
+            Blog
+          </Link>
+          </div>
+
+          </nav>
+        {/* Navigation */}
+          {/* <Link href="/products" className="hover:text-gray-500">
+            Products
+          </Link> */}
 
           {/* Conditional Rendering Based on User Authentication */}
-          {user ? (
+          {/* {user ? ( */}
             <>
               {/* User Profile Icon */}
-              <Link href="/orders" className="hover:text-gray-500">
-            Orders
-          </Link>
-              <Link href="/profile" className="hover:text-gray-500">
-                <FaUser size={20} />
-              </Link>
+              {/* <Link href="/orders" className="hover:text-gray-500">
+                Orders
+              </Link> */}
+              <div className="right flex gap-6 items-center">
+            
 
-              {/* Wishlist Icon */}
               <Link href="/wishlist" className="hover:text-gray-500">
-                <FaHeart size={20} />
+                <IoHeartOutline size={20} />
               </Link>
-
-              {/* Cart Icon */}
+              <Link href="/" className="hover:text-gray-500">
+                <AiOutlineUser size={20} />
+              </Link>
               <Link href="/cart" className="hover:text-gray-500">
-                <FaCartShopping size={20} />
+                <IoCartOutline size={20} />
               </Link>
+              </div>
 
               {/* Logout Button */}
-              <Button
-                onClick={logout}
-                className=""
-              >
+              {/* <Button onClick={logout} className="">
                 Logout
-              </Button>
+              </Button> */}
             </>
-          ) : (
-            <>
-              {/* Login and Register Links */}
-              <Link href="/login" className="hover:text-gray-500">
-                Login
-              </Link>
-              <Link href="/register" className="hover:text-gray-500">
-                Register
-              </Link>
+          
+          
 
-              {/* Wishlist Icon (Redirect to Login) */}
-              <Link href="/login" className="hover:text-gray-500">
-                <FaHeart size={20} />
-              </Link>
-
-              {/* Cart Icon (Redirect to Login) */}
-              <Link href="/login" className="hover:text-gray-500">
-                <FaCartShopping size={20} />
-              </Link>
-            </>
-          )}
-        </nav>
+        {/* <div className="right">
+          <Link href="/login" className="hover:text-gray-500">
+            <FaHeart size={20} />
+          </Link>
+          <Link href="/login" className="hover:text-gray-500">
+            <FaCartShopping size={20} />
+          </Link>
+          <Link href="/login" className="hover:text-gray-500">
+            Login
+          </Link>
+          <Link href="/register" className="hover:text-gray-500">
+            Register
+          </Link>
+        </div> */}
       </div>
     </header>
   );

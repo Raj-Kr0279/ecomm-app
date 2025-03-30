@@ -130,6 +130,7 @@ export default function AdminPanel() {
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="mb-6 space-y-4">
+        <div className="grid gap-4 grid-cols-2">
         <div>
           <label className="block text-sm font-medium">Product Name</label>
           <input
@@ -151,6 +152,8 @@ export default function AdminPanel() {
             required
           />
         </div>
+        </div>
+        <div className="grid grid-cols-4 gap-4">
         <div>
           <label className="block text-sm font-medium">Color</label>
           <input
@@ -199,6 +202,7 @@ export default function AdminPanel() {
             className="w-full border rounded px-3 py-2"
             required
           />
+        </div>
         </div>
         <div>
           <label className="block text-sm font-medium">Image</label>

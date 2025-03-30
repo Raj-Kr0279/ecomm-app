@@ -3,7 +3,7 @@
 @theme {
   --text-textPrimary: #111827; /* Dark Gray */
   --text-textSecondary: #6B7280; /* Muted Gray */
-  --color-bgPrimary: #F3F4F6; /* Light Gray */
+  --color-bgPrimary: #ffffff; /* Light Gray */
   --color-bgSecondary: #E5E7EB; /* Gray */
   --color-primary: #cd0202;
   --color-hoverButton: #f00;
